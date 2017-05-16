@@ -7,6 +7,10 @@ target 'snapchat' do
 
   # Pods for snapchat
 pod 'Firebase/Core'
+pod 'Firebase/Auth’
+pod 'Firebase/Database’
+pod 'Firebase/Storage’
+
 
   target 'snapchatTests' do
     inherit! :search_paths

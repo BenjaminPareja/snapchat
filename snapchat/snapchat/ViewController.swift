@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class ViewController: UIViewController{
 
@@ -29,14 +30,24 @@ class ViewController: UIViewController{
     }
     @IBAction func btnIniciarSesion(_ sender: Any) {
         
-        if "hols" != nil{
-            print("TENEMOS EL SIGUIENTE ERROR: \(error)")
-        }
-        else{
-            print("Inicio de Sesion exitoso")
-        }
+        FIRAuth.auth()?.signIn(withEmail: email.text!, password: password.text!, completion:{ (user,error) in
+            print("Intentamos iniciar Sesion")
+            if error != nil{
+//                print("TENEMOS EL SIGUIENTE ERROR: \(error)")
+                FIRAuth.auth()?.createUser(withEmail: self.email.text!, password: self.password.text!, completion:{ (user,error) in
+                        print("Intentamos crear un usuario")
+                    if error != nil{
+                            print("TENEMOS EL SIGUIENTE ERROR: \(error)")
+                    }
+                    else{
+                            print("Inicio de Sesion exitoso")
+                        self.performSegue(withIdentifier: "iniciarsesionsegue", sender: nil)
+                    }
+                })
+            }else{
+                    print("Inicio de Sesion exitoso")
+                    self.performSegue(withIdentifier: "iniciarsesionsegue", sender: nil)
+                }
+            })
     }
-
-
 }
-

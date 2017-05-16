@@ -40,16 +40,17 @@ class ImagenViewController: UIViewController,UIImagePickerControllerDelegate, UI
     @IBAction func btnElegirContacto(_ sender: Any) {
         performSegue(withIdentifier: "seleccionarContactoSegue", sender: nil)
     }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let imagenesFolder
-        
-        imagenesFolder.child("imagenes.png").put(imagenData, metadata: nil, completion:{(metadata,error)in
-            print("Intentando subirla")
-            if error != nil{
-                print("Ocurrio un error: ")
-            })
-    }
-   
-
+//    
+//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//        let imagenesFolder
+//        
+//        imagenesFolder.child("imagenes.png").put(imagenData, metadata: nil, completion:{(metadata,error)in
+//            print("Intentando subirla")
+//            if error != nil{
+//                print("Ocurrio un error: ")
+//            })
+//    }
+//   
+//
+//}
 }

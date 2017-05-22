@@ -19,15 +19,9 @@ class ViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        
         
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     @IBAction func btnIniciarSesion(_ sender: Any) {
         
         FIRAuth.auth()?.signIn(withEmail: email.text!, password: password.text!, completion:{ (user,error) in
@@ -37,16 +31,19 @@ class ViewController: UIViewController{
                 FIRAuth.auth()?.createUser(withEmail: self.email.text!, password: self.password.text!, completion:{ (user,error) in
                         print("Intentamos crear un usuario")
                     if error != nil{
-                            print("TENEMOS EL SIGUIENTE ERROR: \(error)")
+                            print("TENEMOS EL SIGUIENTE ERROR: ")
                     }
                     else{
                             print("Inicio de Sesion exitoso")
-                        self.performSegue(withIdentifier: "iniciarsesionsegue", sender: nil)
+                        FIRDatabase.database().reference().child("usuarios").child(user!.uid).child("email").setValue(user!.email)
+                            self.performSegue(withIdentifier: "seguemiqueridosegue", sender: nil)
+//                        self.performSegue(withIdentifier: "segueInicioSesion", sender: nil)
                     }
                 })
             }else{
                     print("Inicio de Sesion exitoso")
-                    self.performSegue(withIdentifier: "iniciarsesionsegue", sender: nil)
+                              self.performSegue(withIdentifier: "seguemiqueridosegue", sender: nil)
+//                    self.performSegue(withIdentifier: "segueInicioSesion", sender: nil)
                 }
             })
     }

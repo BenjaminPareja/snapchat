@@ -1,0 +1,53 @@
+//
+//  ElegirUsuarioViewController.swift
+//  snapchat
+//
+//  Created by Brian Benjamin Pareja Meruvia on 22/05/17.
+//  Copyright © 2017 Brian Benjamin Pareja Meruvia. All rights reserved.
+//
+
+import UIKit
+import Firebase
+
+class ElegirUsuarioViewController: UIViewController,UITableViewDataSource,UITableViewDelegate{
+
+    @IBOutlet weak var tableView: UITableView!
+    
+    var usuarios : [Usuario] = []
+    var imagenURL = ""
+    var descrip = ""
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        tableView.dataSource = self
+        tableView.delegate = self
+        // Do any additional setup after loading the view.
+        
+        FIRDatabase.database().reference().child("usuarios").observe(FIRDataEventType.childAdded, with: {(snapshot) in print(snapshot)
+            
+            
+            let usuario = Usuario()
+            usuario.email = (snapshot.value as! NSDictionary)["email"] as! String
+            usuario.uid = snapshot.key
+            self.usuarios.append(usuario)
+            self.tableView.reloadData()
+        })
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return usuarios.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell()
+        let usuario = usuarios[indexPath.row]
+        cell.textLabel?.text = usuario.email
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let usuario = usuarios[indexPath.row]
+        let snap = ["from":usuario.email,"descripcion":descrip,"imagenURL":imagenURL]
+        FIRDatabase.database().reference().child(usuario.uid).child("snaps").childByAutoId().setValue(snap)
+    }
+}

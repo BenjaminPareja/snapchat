@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class ImagenViewController: UIViewController,UIImagePickerControllerDelegate, UINavigationControllerDelegate{
 
@@ -38,19 +39,27 @@ class ImagenViewController: UIViewController,UIImagePickerControllerDelegate, UI
     }
 
     @IBAction func btnElegirContacto(_ sender: Any) {
-        performSegue(withIdentifier: "seleccionarContactoSegue", sender: nil)
+        btnElegir.isEnabled = false
+        let imagenesFolder = FIRStorage.storage().reference().child("imagenes")
+        let imagenData = UIImagePNGRepresentation(imagen.image!)!
+        
+        imagenesFolder.child("\(NSUUID().uuidString).jpg").put(imagenData, metadata: nil, completion:{(metadata,error)in
+            print("Intentando subirla")
+            if error != nil{
+                print("Ocurrio un error: ")
+            }
+            else{
+                self.performSegue(withIdentifier: "seleccionarContactoSegue", sender: metadata?.downloadURL()!.absoluteString)
+            }
+        })
+        
+        
     }
-//    
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//        let imagenesFolder
-//        
-//        imagenesFolder.child("imagenes.png").put(imagenData, metadata: nil, completion:{(metadata,error)in
-//            print("Intentando subirla")
-//            if error != nil{
-//                print("Ocurrio un error: ")
-//            })
-//    }
-//   
-//
-//}
-}
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        let siguienteVC = segue.destination as! ElegirUsuarioViewController
+        siguienteVC.imagenURL = sender as! String
+        siguienteVC.descrip = descripcion.text!
+        
+}}

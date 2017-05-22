@@ -41,7 +41,7 @@ class ImagenViewController: UIViewController,UIImagePickerControllerDelegate, UI
     @IBAction func btnElegirContacto(_ sender: Any) {
         btnElegir.isEnabled = false
         let imagenesFolder = FIRStorage.storage().reference().child("imagenes")
-        let imagenData = UIImagePNGRepresentation(imagen.image!)!
+        let imagenData = UIImageJPEGRepresentation(imagen.image!, 0.1)!
         
         imagenesFolder.child("\(NSUUID().uuidString).jpg").put(imagenData, metadata: nil, completion:{(metadata,error)in
             print("Intentando subirla")

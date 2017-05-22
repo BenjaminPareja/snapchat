@@ -8,7 +8,7 @@
 
 import Foundation
 class Snap{
-    var imagenURL =""
+    var imagenURL = ""
     var descrip = ""
     var from = ""
 }

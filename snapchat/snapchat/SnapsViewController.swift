@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SnapsViewController: UIViewController,UITableViewDelegate, UITableViewDataSource {
+class SnapsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

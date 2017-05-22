@@ -48,6 +48,6 @@ class ElegirUsuarioViewController: UIViewController,UITableViewDataSource,UITabl
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let usuario = usuarios[indexPath.row]
         let snap = ["from":usuario.email,"descripcion":descrip,"imagenURL":imagenURL]
-        FIRDatabase.database().reference().child(usuario.uid).child("snaps").childByAutoId().setValue(snap)
+        FIRDatabase.database().reference().child("usuarios").child(usuario.uid).child("snaps").childByAutoId().setValue(snap)
     }
 }

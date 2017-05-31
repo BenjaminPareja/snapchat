@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import AVFoundation
 
 class ImagenViewController: UIViewController,UIImagePickerControllerDelegate, UINavigationControllerDelegate{
 
@@ -16,11 +17,20 @@ class ImagenViewController: UIViewController,UIImagePickerControllerDelegate, UI
     @IBOutlet weak var btnElegir: UIButton!
     var imagePicker = UIImagePickerController()
     var imagenID = NSUUID().uuidString
+    var URLaudio: String = ""
+//  audio
+    @IBOutlet weak var btnGrabar: UIButton!
+    @IBOutlet weak var btnReproducir: UIButton!
+    var audioRecorder : AVAudioRecorder?
+    var audioURL : URL?
+    var audioPlayer : AVAudioPlayer?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupRecorder()
         imagePicker.delegate = self
         btnElegir.isEnabled = false
+        btnReproducir.isEnabled = false
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
@@ -54,6 +64,19 @@ class ImagenViewController: UIViewController,UIImagePickerControllerDelegate, UI
             }
         })
         
+//        subiendo el audio a firebase
+        let audioFolder = FIRStorage.storage().reference().child("audio")
+        let audioData = NSData(contentsOf: audioURL!)
+        
+        audioFolder.child("\(imagenID).m4a").put(audioData! as Data, metadata: nil, completion:{(metadata,error)in
+            print("Intentando subirla")
+            if error != nil{
+                print("Ocurrio un error: ")
+            }
+            else{
+                self.URLaudio = (metadata?.downloadURL()!.absoluteString)!
+            }
+        })
         
     }
     
@@ -61,7 +84,67 @@ class ImagenViewController: UIViewController,UIImagePickerControllerDelegate, UI
         
         let siguienteVC = segue.destination as! ElegirUsuarioViewController
         siguienteVC.imagenURL = sender as! String
+        siguienteVC.audioURL = URLaudio
+        print(URLaudio)
         siguienteVC.descrip = descripcion.text!
         siguienteVC.imagenID = imagenID
         
-}}
+}
+
+//funciones del audio
+    func setupRecorder(){
+        do{
+            //creando una sesion de audio
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(AVAudioSessionCategoryPlayAndRecord)
+            try session.overrideOutputAudioPort(.speaker)
+            try session.setActive(true)
+            
+            //Creando una direccion para el archivo de audio
+            let basePath : String = NSSearchPathForDirectoriesInDomains(. documentDirectory, .userDomainMask, true).first!
+            let pathComponents = [basePath,"audio1.m4a"]
+            audioURL = NSURL.fileURL(withPathComponents: pathComponents)!
+            print("*****************")
+            print(audioURL)
+            print("*****************")
+            //Crear opciones para el grabador de audio
+            var settings : [String:AnyObject] = [:]
+            settings[AVFormatIDKey] = Int(kAudioFormatMPEG4AAC) as AnyObject?
+            settings[AVSampleRateKey] = 44100.0 as AnyObject?
+            settings[AVNumberOfChannelsKey] = 2 as AnyObject?
+            
+            //Crear el objeto de grabacios de audio
+            audioRecorder = try AVAudioRecorder(url: audioURL!, settings: settings)
+            audioRecorder!.prepareToRecord()
+        } catch let error as NSError{
+            print(error)
+        }
+    }
+    
+    @IBAction func recTapped(_ sender: UIButton) {
+        
+        if audioRecorder!.isRecording{
+            audioRecorder?.stop()
+            btnGrabar.setTitle("Record", for: .normal)
+            btnReproducir.isEnabled = true
+            
+        }
+        else{
+            audioRecorder?.record()
+            btnGrabar.setTitle("Stop", for: .normal)
+        }
+        
+        
+    }
+    
+    @IBAction func playTapped(_ sender: UIButton) {
+        do{
+            try audioPlayer = AVAudioPlayer(contentsOf: audioURL!)
+            audioPlayer?.play()
+        }
+        catch{}
+    }
+    
+    
+
+}

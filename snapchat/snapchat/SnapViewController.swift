@@ -24,6 +24,7 @@ class SnapViewController: UIViewController,UITableViewDataSource,UITableViewDele
             
             
             snap.imagenURL = (snapshot.value as! NSDictionary)["imagenURL"] as! String
+            snap.audioURL = (snapshot.value as! NSDictionary)["audioURL"] as! String
             snap.from = (snapshot.value as! NSDictionary)["from"] as! String
             snap.descrip = (snapshot.value as! NSDictionary)["descripcion"] as! String
             snap.imagenID = (snapshot.value as! NSDictionary)["imagenID"] as! String

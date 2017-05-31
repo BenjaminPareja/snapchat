@@ -283,7 +283,11 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="7SO-2N-qJ7">
-                        <barButtonItem key="leftBarButtonItem" title="Cerrar Sesion" id="qZm-kt-Wh6"/>
+                        <barButtonItem key="leftBarButtonItem" title="Cerrar Sesion" id="qZm-kt-Wh6">
+                            <connections>
+                                <action selector="cerrarSesion:" destination="J6s-ei-geu" id="i2j-ZO-rom"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="2Vm-6Y-ZRp">
                             <connections>
                                 <segue destination="di8-0z-G4U" kind="show" id="f5t-S9-MTZ"/>

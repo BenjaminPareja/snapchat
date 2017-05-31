@@ -16,6 +16,7 @@ class ElegirUsuarioViewController: UIViewController,UITableViewDataSource,UITabl
     var usuarios : [Usuario] = []
     var imagenURL = ""
     var descrip = ""
+    var imagenID = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,8 +47,10 @@ class ElegirUsuarioViewController: UIViewController,UITableViewDataSource,UITabl
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
         let usuario = usuarios[indexPath.row]
-        let snap = ["from":usuario.email,"descripcion":descrip,"imagenURL":imagenURL]
+        let snap = ["from":FIRAuth.auth()!.currentUser!.email!,"descripcion":descrip,"imagenURL":imagenURL, "imagenID":imagenID]
         FIRDatabase.database().reference().child("usuarios").child(usuario.uid).child("snaps").childByAutoId().setValue(snap)
+        navigationController?.popToRootViewController(animated: true)
     }
 }

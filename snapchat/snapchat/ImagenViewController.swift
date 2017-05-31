@@ -15,18 +15,19 @@ class ImagenViewController: UIViewController,UIImagePickerControllerDelegate, UI
     @IBOutlet weak var descripcion: UITextView!
     @IBOutlet weak var btnElegir: UIButton!
     var imagePicker = UIImagePickerController()
+    var imagenID = NSUUID().uuidString
     
     override func viewDidLoad() {
         super.viewDidLoad()
         imagePicker.delegate = self
-
-        
+        btnElegir.isEnabled = false
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         let image = info[UIImagePickerControllerOriginalImage] as! UIImage
         imagen.image = image
         imagen.backgroundColor = UIColor.clear
+        btnElegir.isEnabled = true
         imagePicker.dismiss(animated: true, completion: nil)
     }
     
@@ -43,7 +44,7 @@ class ImagenViewController: UIViewController,UIImagePickerControllerDelegate, UI
         let imagenesFolder = FIRStorage.storage().reference().child("imagenes")
         let imagenData = UIImageJPEGRepresentation(imagen.image!, 0.1)!
         
-        imagenesFolder.child("\(NSUUID().uuidString).jpg").put(imagenData, metadata: nil, completion:{(metadata,error)in
+        imagenesFolder.child("\(imagenID).jpg").put(imagenData, metadata: nil, completion:{(metadata,error)in
             print("Intentando subirla")
             if error != nil{
                 print("Ocurrio un error: ")
@@ -61,5 +62,6 @@ class ImagenViewController: UIViewController,UIImagePickerControllerDelegate, UI
         let siguienteVC = segue.destination as! ElegirUsuarioViewController
         siguienteVC.imagenURL = sender as! String
         siguienteVC.descrip = descripcion.text!
+        siguienteVC.imagenID = imagenID
         
 }}

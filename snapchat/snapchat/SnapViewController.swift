@@ -26,9 +26,24 @@ class SnapViewController: UIViewController,UITableViewDataSource,UITableViewDele
             snap.imagenURL = (snapshot.value as! NSDictionary)["imagenURL"] as! String
             snap.from = (snapshot.value as! NSDictionary)["from"] as! String
             snap.descrip = (snapshot.value as! NSDictionary)["descripcion"] as! String
+            snap.imagenID = (snapshot.value as! NSDictionary)["imagenID"] as! String
+            snap.id = snapshot.key
             self.snaps.append(snap)
             self.tableView.reloadData()
     })
+        FIRDatabase.database().reference().child("usuarios").child(FIRAuth.auth()!.currentUser!.uid).child("snaps").observe(FIRDataEventType.childRemoved, with: {(snapshot) in
+            let snap = Snap()
+            
+            var iterador = 0
+            for snap in self.snaps{
+                if snap.id == snapshot.key{
+                    self.snaps.remove(at: iterador)
+                }
+                iterador += 1
+            }
+            self.tableView.reloadData()
+        })
+        
 }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -36,8 +51,14 @@ class SnapViewController: UIViewController,UITableViewDataSource,UITableViewDele
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
-        let snap = snaps[indexPath.row]
-        cell.textLabel?.text = snap.from
+        if snaps.count == 0{
+            cell.textLabel?.text = "no tienes snaps"
+        }
+        else{
+            let snap = snaps[indexPath.row]
+            cell.textLabel?.text = snap.from
+        }
+
         return cell
     }
     
@@ -52,5 +73,8 @@ class SnapViewController: UIViewController,UITableViewDataSource,UITableViewDele
         }
     }
     
+    @IBAction func cerrarSesion(_ sender: UIBarButtonItem) {
+         dismiss(animated: true, completion: nil)
+    }
     
 }

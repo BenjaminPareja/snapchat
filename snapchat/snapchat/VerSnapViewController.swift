@@ -7,7 +7,8 @@
 //
 
 import UIKit
-
+import SDWebImage
+import Firebase
 class VerSnapViewController: UIViewController {
 
 
@@ -23,12 +24,17 @@ class VerSnapViewController: UIViewController {
         // Do any additional setup after loading the view.
         
         label.text? = snap.descrip
+        image.sd_setImage(with: URL(string: snap.imagenURL))
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        FIRDatabase.database().reference().child("usuarios").child(FIRAuth.auth()!.currentUser!.uid).child("snaps").child(snap.id).removeValue()
+        
+        FIRStorage.storage().reference().child("imagenes").child("\(snap.imagenID).jpg").delete{(error) in
+            print("se elimino")
+        }
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
 
     /*
